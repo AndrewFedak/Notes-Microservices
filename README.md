@@ -8,6 +8,7 @@ This repo is proof of concept of Full-Stack application
 - back (NodeJS)
 - db (Mongodb)
 - messaging (RabbitMQ)
+- JWT
 
 ## Network
 - HTTP
