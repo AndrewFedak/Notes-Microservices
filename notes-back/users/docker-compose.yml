@@ -1,0 +1,42 @@
+version: '3.3'
+name: 'users-compose'
+services:
+    mongodb-users:
+        image: mongo
+        container_name: mongodb-users-container
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=mongoadmin
+            - MONGO_INITDB_ROOT_PASSWORD=bdung
+        restart: always
+        ports:
+            - '3001:27017'
+        networks:
+            - my_network
+    users:
+        image: andrewfedak/users-app:latest
+        container_name: users-app
+        environment:
+            - MONGO_DB_NAME=nodegmp
+            - MONGO_USER=mongoadmin
+            - MONGO_PASSWORD=bdung
+            - MONGO_HOST=mongodb-users  # Using localhost/127.0.0.1 as the DB host is not good because it points to the host PC network
+                                        # So we should use Service name as host, then it will be resolved by DNS to local IP of MongoDB
+                                        # (Imaging mongodb-users container was assigned local IP: 172.18.0.2)
+                                        # (DNS mongodb-users ~> 172.18.0.2)
+            
+            - MONGO_PORT=27017          # port mongodb is listening on (27017), not what is exposed to host (3001). 
+                                        # Services has their saperate DNS record, and mongodb-users will map to local IP address (i.e 172.18.0.2)
+                                        # than we will connect to port that MongoDB service is listening on 
+                                        # (DNS mongodb-users:27017 ~> 172.18.0.2:27017)
+
+            - PORT=3000
+            - TOKEN_KEY=some_secret_key
+        restart: always
+        ports:
+            - '3000:3000'
+        depends_on:
+            - mongodb-users
+        networks:
+            - my_network
+networks:
+    my_network:

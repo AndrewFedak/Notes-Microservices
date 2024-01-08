@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: notes-front
+  namespace: notes
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: notes.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: notes-front
+            port:
+              number: 80

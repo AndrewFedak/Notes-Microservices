@@ -1,0 +1,62 @@
+version: '3.3'
+name: 'notes-compose'
+services:
+    rabbitmq:
+        image: rabbitmq:3.12-management
+        container_name: rabbitmq-container
+        restart: always
+        ports:
+            - '5672:5672'
+            - '15672:15672'
+        healthcheck:
+            test: ["CMD", "rabbitmqctl", "status"]
+            interval: 1m30s
+            timeout: 10s
+            retries: 3
+            start_period: 40s
+            start_interval: 5s
+        networks:
+            - my_network
+    mongodb-notes:
+        image: mongo
+        container_name: mongodb-notes-container
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=mongoadmin
+            - MONGO_INITDB_ROOT_PASSWORD=bdung
+        restart: always
+        ports:
+            - '3003:27017'
+        networks:
+            - my_network
+    notes:
+        image: andrewfedak/notes-app:latest
+        container_name: notes-app
+        environment:
+            - MONGO_DB_NAME=nodegmp
+            - MONGO_USER=mongoadmin
+            - MONGO_PASSWORD=bdung
+            - MONGO_HOST=mongodb-notes  # Using localhost/127.0.0.1 as the DB host is not good because it points to the host PC network
+                                        # So we should use Service name as host, then it will be resolved by DNS to local IP of MongoDB
+                                        # (Imaging mongodb-notes container was assigned local IP: 172.18.0.2)
+                                        # (DNS mongodb-notes ~> 172.18.0.2)
+            
+            - MONGO_PORT=27017          # port mongodb is listening on (27017), not what is exposed to host (3003). 
+                                        # Services has their saperate DNS record, and mongodb-notes will map to local IP address (i.e 172.18.0.2)
+                                        # than we will connect to port that MongoDB service is listening on 
+                                        # (DNS mongodb-notes:27017 ~> 172.18.0.2:27017)          
+            - RABBIT_MQ_HOST=rabbitmq
+
+            - PORT=3000
+            - TOKEN_KEY=some_secret_key
+        restart: always
+        ports:
+            - '3002:3000'
+        depends_on:
+            rabbitmq:
+                condition: service_healthy
+            mongodb-notes:
+                condition: service_started
+        networks:
+            - my_network
+networks:
+    my_network:

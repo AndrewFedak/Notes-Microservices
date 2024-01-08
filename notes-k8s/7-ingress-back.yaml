@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: notes-back
+  namespace: notes
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: api.notes.com
+    http:
+      paths:
+      - path: /users(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: users
+            port:
+              number: 80
+      - path: /notes(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: notes
+            port:
+              number: 80

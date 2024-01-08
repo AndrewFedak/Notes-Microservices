@@ -1,0 +1,37 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notes-front-deployment
+  namespace: notes
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notes-front
+  template:
+    metadata:
+      labels:
+        app: notes-front
+    spec:
+      containers:
+      - name: front
+        image: andrewfedak/notes-front:latest
+        #   For local use: 
+        #    https://minikube.sigs.k8s.io/docs/handbook/pushing
+        #    https://minikube.sigs.k8s.io/docs/commands/docker-env/#:~:text=unset
+        # imagePullPolicy: Never
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notes-front
+  namespace: notes
+spec:
+  selector:
+    app: notes-front
+  ports:
+    - protocol: TCP
+      port: 80

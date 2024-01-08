@@ -1,0 +1,15 @@
+version: '3.3'
+name: 'notes-front'
+services:
+    notes:
+        image: andrewfedak/notes-front:latest
+        container_name: notes-front
+        environment:
+            - API_HOST=localhost
+        restart: always
+        ports:
+            - '8080:80'
+        networks:
+            - my_network
+networks:
+    my_network:

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nslookup-pod
+  namespace: notes
+spec:
+  containers:
+  - name: nslookup-container
+    image: busybox
+    command: ["sleep", "3600"]  # Sleep to keep the pod running for troubleshooting
