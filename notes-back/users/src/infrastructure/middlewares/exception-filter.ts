@@ -1,7 +1,7 @@
 import { ErrorRequestHandler } from 'express'
 
-import { HttpException } from './http.exceptions'
-import { HttpStatus } from './http-statuses'
+import { HttpException } from '../exceptions/http.exceptions'
+import { HttpStatus } from '../exceptions/http-statuses'
 
 import { ResponseDataAndError } from '../response-data-and-error'
 

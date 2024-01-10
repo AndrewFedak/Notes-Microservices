@@ -1,10 +1,8 @@
-import * as dotenv from 'dotenv'
 import express from 'express'
 import cors from 'cors'
 
-import * as database from './config/db'
-
-import { ExceptionFilter } from './infrastructure/exceptions/exception-filter'
+import { ExceptionFilter } from './infrastructure/middlewares/exception-filter'
+import { ErrorLoggerMiddleware, RequestLoggerMiddleware } from './infrastructure/middlewares/logger'
 
 import { UsersRepository } from './users/users.repository'
 
@@ -13,10 +11,6 @@ import { AuthenticationRepository } from './authentication/authentication.reposi
 import { AuthenticationService } from './authentication/authentication.service'
 
 export async function bootstrap() {
-  dotenv.config()
-
-  await database.connect()
-
   const authenticationService = new AuthenticationService(
     new UsersRepository(),
     new AuthenticationRepository(),
@@ -26,8 +20,11 @@ export async function bootstrap() {
 
   app.use(cors())
   app.use(express.json())
+  app.use(RequestLoggerMiddleware)
 
   app.use(AuthenticationController.init(authenticationService))
+
+  app.use(ErrorLoggerMiddleware)
   app.use(ExceptionFilter)
 
   return app

@@ -31,7 +31,7 @@ export async function consumeFromExchange(
   return await channel.consume(queue, onConsume, { noAck: true })
 }
 
-export async function rabbitMQConnection() {
+export async function rabbitMQConnect() {
   connection = await amqplib.connect(`amqp://${process.env.RABBIT_MQ_HOST}`)
   console.log(
     'Successfully connected to RabbitMQ on: ',
@@ -45,4 +45,5 @@ export async function rabbitMQConnection() {
   channel.on('error', () => {
     // recover or exit
   })
+  return connection
 }

@@ -24,9 +24,9 @@ export function bootstrapWss(
 
     ws.send('Hi there, I am a WebSocket server')
     ws.on('error', e => ws.send(Buffer.from(e.message)))
-    ws.on('close', (code, reason) =>
-      console.log(`Code: ${code}; Reason: ${reason.toString()}`),
-    )
+    ws.on('close', (code, reason) => {
+      console.log(`Code: ${code}; Reason: ${reason.toString()}`)
+    })
 
     ws.on('message', message => {
       try {
@@ -43,12 +43,14 @@ export function bootstrapWss(
         if (event === 'ping') {
           return wsHelper.send('pong')
         }
-        throw new Error('Wrong query')
+        return wsHelper.send('Wrong query')
       } catch (e) {
-        wsHelper.send((e as Error).message)
+        return wsHelper.send((e as Error).message)
       }
     })
   })
+  
+  return wss
 
   /* Not sure is is a good practice to to authentication check inside upgrade
     https://ably.com/blog/websocket-authentication
