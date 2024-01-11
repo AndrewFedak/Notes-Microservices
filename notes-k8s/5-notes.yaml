@@ -74,6 +74,13 @@ spec:
           value: "some_secret_key123"
         ports:
         - containerPort: 80
+        volumeMounts:
+        - name: logs-volume
+          mountPath: /app/logs
+      volumes:
+      - name: logs-volume
+        persistentVolumeClaim:
+          claimName: notes-logs-pvc
 ---
 apiVersion: v1
 kind: Service

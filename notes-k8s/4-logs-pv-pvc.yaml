@@ -1,0 +1,29 @@
+# https://kubernetes.io/docs/concepts/storage/persistent-volumes/#reserving-a-persistentvolume
+# apiVersion: v1
+# kind: PersistentVolume
+# metadata:
+#   name: my-logs-pv
+# spec:
+#   capacity:
+#     storage: 10Gi
+#   accessModes:
+#     - ReadWriteOnce
+#   storageClassName: ""
+#   claimRef:
+#     name: my-logs-pvc
+#     namespace: notes
+#   hostPath:
+#     path: "/mnt/path/logs"  # Update this path to the actual path on your host
+#     type: DirectoryOrCreate
+# ---
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   namespace: notes
+#   name: my-logs-pvc
+# spec:
+#   accessModes:
+#     - ReadWriteOnce
+#   resources:
+#     requests:
+#       storage: 1Gi

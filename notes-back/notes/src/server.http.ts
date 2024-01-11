@@ -17,6 +17,10 @@ export function bootstrapHttpServer(): Express {
   app.use(express.json())
   app.use(RequestLoggerMiddleware)
   
+  app.get('/healthz', (req, res) => {
+    res.status(200).send('Healthy')
+  })
+
   app.use(
     AuthenticationMiddleware.authenticate,
     NotesController.init(notesService),

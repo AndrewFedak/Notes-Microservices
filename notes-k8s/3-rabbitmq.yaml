@@ -26,8 +26,13 @@ metadata:
   name: rabbitmq
   namespace: notes
 spec:
+  type: NodePort # https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
   selector:
     app: rabbitmq
   ports:
     - protocol: TCP
       port: 5672
+      name: "direct-connection"
+    - protocol: TCP
+      port: 15672
+      name: "user-interface"

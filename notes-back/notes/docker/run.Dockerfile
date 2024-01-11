@@ -9,14 +9,18 @@ COPY --from=andrewfedak/notes-build:latest /app/dist ./dist
 
 RUN npm ci --only=production --ignore-scripts
 
-USER node
+# Create a user
+RUN useradd -m myuser
+# Give ownership of work directory to new user
+RUN chown -R myuser:myuser /app
+# Give read-write permissions to new user on work directory
+RUN chmod -R 755 /app
+# Switch to new user
+USER myuser
 
 EXPOSE 3000
 # Define a health check
 # HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 CMD curl --fail http://localhost:3000/health || exit 1
-
-# RUN getent group my_app || groupadd --gid 1002 my_app 
-# RUN getent passwd my_app || useradd -ms /usr/sbin/nologin --gid 1002 --uid 1002 my_app 
 
 CMD [ "npm", "run", "server" ]
 

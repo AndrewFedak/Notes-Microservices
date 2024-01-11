@@ -22,6 +22,10 @@ export async function bootstrap() {
   app.use(express.json())
   app.use(RequestLoggerMiddleware)
 
+  app.get('/healthz', (req, res) => {
+    res.status(200).send('Healthy')
+  })
+
   app.use(AuthenticationController.init(authenticationService))
 
   app.use(ErrorLoggerMiddleware)
