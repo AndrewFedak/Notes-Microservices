@@ -18,10 +18,15 @@ RUN chmod -R 755 /app
 # Switch to new user
 USER myuser
 
-EXPOSE 3000
 # Define a health check
 # HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 CMD curl --fail http://localhost:3000/health || exit 1
 
-CMD [ "npm", "run", "server" ]
+EXPOSE 3000
 
-# docker build -t your_image_name -f build.Dockerfile .
+# When using Docker, the ENTRYPOINT command runs your script as pid 1. pid 1 is special in Unix systems and handles signals differently than other processes.
+# The problem in your case is likely the non-responsiveness of pid 1 to the SIGTERM signal.
+# The ENTRYPOINT ["npm", "run", "server"] instruction actually runs the npm process and then npm spawns your application.
+# So, Docker sends the SIGTERM signal to the npm process, not directly to your Node.js process.
+# Npm does not forward the signal to your application, meaning your code doesn't receive it.
+# You have to change the ENTRYPOINT directive in your Dockerfile to run your Node.js app directly, not through npm.
+ENTRYPOINT [ "node", "./dist/index.js" ]

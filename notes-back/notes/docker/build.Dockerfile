@@ -7,8 +7,8 @@ COPY package*.json ./
 
 RUN npm install
 
-# Copy the source code to the container 
-# (why copy after npm install, because source code will vary more frequent, 
+# Copy the source code to the container
+# (why copy after npm install, because source code will vary more frequent,
 # thus to keep NPM cached, we will install this before COPY and will take a use of cached layer)
 COPY . .
 
